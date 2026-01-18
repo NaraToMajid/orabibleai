@@ -62,16 +62,9 @@ function addMessage(content, isUser = false) {
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
     
-    // Format content - preserve line breaks and format Bible verses
-    let formattedContent = content;
+    // Format content - preserve line breaks
+    contentDiv.innerHTML = content.replace(/\n/g, '<br>');
     
-    // Format Bible verses with special styling
-    formattedContent = formattedContent.replace(/(\d?\s?[A-Za-z]+ \d+:\d+)/g, '<span class="verse-reference">$1</span>');
-    
-    // Convert line breaks to <br> tags
-    formattedContent = formattedContent.replace(/\n/g, '<br>');
-    
-    contentDiv.innerHTML = formattedContent;
     messageDiv.appendChild(contentDiv);
     chatContainer.appendChild(messageDiv);
     
@@ -151,13 +144,8 @@ function loadChatFromHistory(chatId) {
         
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
+        contentDiv.innerHTML = msg.content.replace(/\n/g, '<br>');
         
-        // Format content
-        let formattedContent = msg.content;
-        formattedContent = formattedContent.replace(/(\d?\s?[A-Za-z]+ \d+:\d+)/g, '<span class="verse-reference">$1</span>');
-        formattedContent = formattedContent.replace(/\n/g, '<br>');
-        
-        contentDiv.innerHTML = formattedContent;
         messageDiv.appendChild(contentDiv);
         chatContainer.appendChild(messageDiv);
     });
@@ -225,7 +213,7 @@ async function sendMessage() {
     showTyping();
     
     try {
-        // Bible AI API - using question and translation parameters
+        // Bible AI API
         const url = `https://api.siputzx.my.id/api/ai/bibleai?question=${encodeURIComponent(userMessage)}&translation=${encodeURIComponent(currentTranslationValue)}`;
         
         console.log('Request URL:', url);
@@ -249,18 +237,20 @@ async function sendMessage() {
         // Remove typing indicator
         removeTyping();
         
-        // Get AI response
-        let aiResponse = data.response || data.answer || 
-                       data.data || data.content || 
-                       data.message || data.text || 
-                       JSON.stringify(data) || "Sorry, no response received.";
+        // Hanya ambil 'answer' dari response
+        let aiResponse = data.answer || "Sorry, no answer received.";
         
-        // Ensure ORABIBLE-AI introduction
-        if (!aiResponse.includes("ORABIBLE-AI") && !aiResponse.includes("Bible AI")) {
-            aiResponse = `ORABIBLE-AI (${currentTranslationValue} Translation)\n\n${aiResponse}`;
+        // Jika tidak ada answer, coba ambil response atau message
+        if (aiResponse === "Sorry, no answer received.") {
+            aiResponse = data.response || data.message || "Sorry, no response available.";
         }
         
-        // Add AI response
+        // Jika ada data.answer yang panjang, potong jika perlu
+        if (aiResponse.length > 5000) {
+            aiResponse = aiResponse.substring(0, 5000) + "\n\n[Response truncated due to length]";
+        }
+        
+        // Add AI response dengan format yang bersih
         addMessage(aiResponse, false);
         
     } catch (error) {
@@ -389,3 +379,19 @@ window.testBibleAPI = async function(testQuestion, translation = 'ESV') {
         return { error: error.message };
     }
 };
+
+// Function untuk memproses response API
+function processBibleResponse(data) {
+    // Hanya ambil bagian 'answer' dari response
+    if (data.answer) {
+        return data.answer;
+    }
+    
+    // Jika tidak ada answer, coba cari di struktur lain
+    if (data.response && data.response.answer) {
+        return data.response.answer;
+    }
+    
+    // Fallback ke response biasa
+    return data.response || data.message || "No answer available.";
+}
