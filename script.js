@@ -177,7 +177,7 @@ function showTyping() {
     typingDiv.className = 'typing-indicator';
     typingDiv.id = 'typingIndicator';
     
-    for (let i = 0; i <3; i++) {
+    for (let i = 0; i < 3; i++) {
         const dot = document.createElement('div');
         dot.className = 'typing-dot';
         typingDiv.appendChild(dot);
@@ -232,21 +232,18 @@ async function sendMessage() {
         }
         
         const data = await response.json();
-        console.log('Full API Response:', data);
+        console.log('API Response Structure:', data);
         
         // Remove typing indicator
         removeTyping();
         
-        // Extract answer dari berbagai kemungkinan struktur
-        let aiResponse = extractAnswer(data);
+        // Extract answer dari struktur response yang baru
+        let aiResponse = extractBibleAnswer(data);
         
-        // Jika masih tidak ada answer, gunakan fallback
-        if (!aiResponse) {
-            aiResponse = `ORABIBLE-AI (${currentTranslationValue} Translation)\n\nI apologize, but I couldn't retrieve a proper answer. Please try asking your question again.\n\nIf the problem persists, the Bible AI service might be temporarily unavailable.`;
+        // Jika tidak ada answer yang valid
+        if (!aiResponse || aiResponse.trim().length < 10) {
+            aiResponse = `ORABIBLE-AI (${currentTranslationValue} Translation)\n\nI apologize, but I couldn't retrieve a proper answer from the Bible AI service.\n\nPlease try rephrasing your question or try again later.`;
         }
-        
-        // Format response dengan lebih baik
-        aiResponse = formatBibleResponse(aiResponse);
         
         // Add AI response
         addMessage(aiResponse, false);
@@ -261,57 +258,83 @@ async function sendMessage() {
     }
 }
 
-// Function to extract answer from various response structures
-function extractAnswer(data) {
-    // Struktur 1: data.answer langsung
+// Function to extract answer from Bible AI response structure
+function extractBibleAnswer(data) {
+    console.log('Extracting answer from:', data);
+    
+    // Struktur berdasarkan response yang ditampilkan:
+    // data.data.results.answer
+    if (data.data && 
+        data.data.results && 
+        data.data.results.answer && 
+        typeof data.data.results.answer === 'string') {
+        console.log('Found answer in data.data.results.answer');
+        return formatBibleAnswer(data.data.results.answer);
+    }
+    
+    // Struktur alternatif: data.results.answer
+    if (data.results && data.results.answer && typeof data.results.answer === 'string') {
+        console.log('Found answer in data.results.answer');
+        return formatBibleAnswer(data.results.answer);
+    }
+    
+    // Struktur alternatif: data.answer langsung
     if (data.answer && typeof data.answer === 'string') {
-        return data.answer;
+        console.log('Found answer in data.answer');
+        return formatBibleAnswer(data.answer);
     }
     
-    // Struktur 2: data.response.answer
-    if (data.response && data.response.answer) {
-        return data.response.answer;
+    // Struktur alternatif: data.data.answer
+    if (data.data && data.data.answer && typeof data.data.answer === 'string') {
+        console.log('Found answer in data.data.answer');
+        return formatBibleAnswer(data.data.answer);
     }
     
-    // Struktur 3: data.answer adalah object yang berisi answer
-    if (data.answer && data.answer.answer) {
-        return data.answer.answer;
-    }
-    
-    // Struktur 4: data.message
-    if (data.message) {
-        return data.message;
-    }
-    
-    // Struktur 5: data.response
-    if (data.response && typeof data.response === 'string') {
-        return data.response;
-    }
-    
-    // Struktur 6: coba cari di nested structures
+    // Coba cari di struktur nested lainnya
     if (typeof data === 'object') {
-        // Cari properti yang berisi string panjang (kemungkinan answer)
-        for (const key in data) {
-            if (typeof data[key] === 'string' && data[key].length > 50) {
-                return data[key];
+        // Cari semua string panjang di object
+        const findLongString = (obj, depth = 0) => {
+            if (depth > 3) return null; // Batasi depth pencarian
+            
+            for (const key in obj) {
+                if (typeof obj[key] === 'string' && obj[key].length > 50) {
+                    console.log(`Found long string in ${key}:`, obj[key].substring(0, 100));
+                    return formatBibleAnswer(obj[key]);
+                }
+                if (typeof obj[key] === 'object' && obj[key] !== null) {
+                    const result = findLongString(obj[key], depth + 1);
+                    if (result) return result;
+                }
             }
+            return null;
+        };
+        
+        const foundAnswer = findLongString(data);
+        if (foundAnswer) {
+            return foundAnswer;
         }
     }
     
+    console.log('No answer found in response structure');
     return null;
 }
 
-// Function to format Bible response
-function formatBibleResponse(answer) {
-    // Bersihkan format, hapus markdown citations [17] dll
-    let formatted = answer;
+// Function to format Bible answer
+function formatBibleAnswer(answer) {
+    // Hapus citation brackets seperti [14], [22], dll
+    let formatted = answer.replace(/\[\d+\]/g, '');
     
-    // Hapus citation brackets seperti [17], [4][6], dll
-    formatted = formatted.replace(/\[\d+\]/g, '');
+    // Hapus multiple citations seperti [4][6]
     formatted = formatted.replace(/\[\d+\]\[\d+\]/g, '');
     
+    // Hapus citation ranges seperti [4-6]
+    formatted = formatted.replace(/\[\d+\-\d+\]/g, '');
+    
+    // Bersihkan whitespace berlebihan
+    formatted = formatted.replace(/\s+/g, ' ').trim();
+    
     // Tambahkan header jika belum ada
-    if (!formatted.includes('ORABIBLE-AI') && !formatted.includes('Answer:')) {
+    if (!formatted.includes('ORABIBLE-AI') && !formatted.toLowerCase().includes('answer:')) {
         formatted = `ORABIBLE-AI (${currentTranslationValue} Translation)\n\n${formatted}`;
     }
     
@@ -427,14 +450,16 @@ window.testBibleAPI = async function(testQuestion, translation = 'ESV') {
         });
         
         const data = await response.json();
-        console.log('Test Response Structure:', data);
+        console.log('Full Test Response:', data);
         
-        // Debug: Tampilkan semua keys
-        console.log('Response Keys:', Object.keys(data));
-        
-        // Debug: Cek apakah ada answer
-        if (data.answer) {
-            console.log('Answer found:', typeof data.answer, data.answer.substring(0, 100));
+        // Debug structure
+        console.log('Response has data property:', !!data.data);
+        if (data.data) {
+            console.log('data.data structure:', data.data);
+            console.log('data.data.results:', data.data.results);
+            if (data.data.results) {
+                console.log('data.data.results.answer:', data.data.results.answer ? data.data.results.answer.substring(0, 200) : 'No answer');
+            }
         }
         
         return data;
@@ -442,4 +467,24 @@ window.testBibleAPI = async function(testQuestion, translation = 'ESV') {
         console.error('Test Error:', error);
         return { error: error.message };
     }
+};
+
+// Function untuk men-debug struktur response
+window.debugResponse = function(data) {
+    console.group('Response Debug');
+    console.log('Top level keys:', Object.keys(data));
+    
+    if (data.data) {
+        console.log('data keys:', Object.keys(data.data));
+        if (data.data.results) {
+            console.log('results keys:', Object.keys(data.data.results));
+            console.log('Answer exists:', !!data.data.results.answer);
+            console.log('Answer type:', typeof data.data.results.answer);
+            if (data.data.results.answer) {
+                console.log('Answer preview:', data.data.results.answer.substring(0, 300));
+            }
+        }
+    }
+    
+    console.groupEnd();
 };
