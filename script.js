@@ -177,7 +177,7 @@ function showTyping() {
     typingDiv.className = 'typing-indicator';
     typingDiv.id = 'typingIndicator';
     
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i <3; i++) {
         const dot = document.createElement('div');
         dot.className = 'typing-dot';
         typingDiv.appendChild(dot);
@@ -232,35 +232,90 @@ async function sendMessage() {
         }
         
         const data = await response.json();
-        console.log('API Response:', data);
+        console.log('Full API Response:', data);
         
         // Remove typing indicator
         removeTyping();
         
-        // Hanya ambil 'answer' dari response
-        let aiResponse = data.answer || "Sorry, no answer received.";
+        // Extract answer dari berbagai kemungkinan struktur
+        let aiResponse = extractAnswer(data);
         
-        // Jika tidak ada answer, coba ambil response atau message
-        if (aiResponse === "Sorry, no answer received.") {
-            aiResponse = data.response || data.message || "Sorry, no response available.";
+        // Jika masih tidak ada answer, gunakan fallback
+        if (!aiResponse) {
+            aiResponse = `ORABIBLE-AI (${currentTranslationValue} Translation)\n\nI apologize, but I couldn't retrieve a proper answer. Please try asking your question again.\n\nIf the problem persists, the Bible AI service might be temporarily unavailable.`;
         }
         
-        // Jika ada data.answer yang panjang, potong jika perlu
-        if (aiResponse.length > 5000) {
-            aiResponse = aiResponse.substring(0, 5000) + "\n\n[Response truncated due to length]";
-        }
+        // Format response dengan lebih baik
+        aiResponse = formatBibleResponse(aiResponse);
         
-        // Add AI response dengan format yang bersih
+        // Add AI response
         addMessage(aiResponse, false);
         
     } catch (error) {
         console.error('API Error:', error);
         removeTyping();
-        addMessage(`ORABIBLE-AI (${currentTranslationValue} Translation)\n\nSorry, experiencing technical difficulties.\n\nPlease try again later or contact Oradev (@orasampurna).`, false);
+        addMessage(`ORABIBLE-AI (${currentTranslationValue} Translation)\n\nSorry, experiencing technical difficulties.\n\nError: ${error.message}\n\nPlease try again later or contact Oradev (@orasampurna).`, false);
     } finally {
         sendButton.disabled = false;
         messageInput.focus();
     }
+}
+
+// Function to extract answer from various response structures
+function extractAnswer(data) {
+    // Struktur 1: data.answer langsung
+    if (data.answer && typeof data.answer === 'string') {
+        return data.answer;
+    }
+    
+    // Struktur 2: data.response.answer
+    if (data.response && data.response.answer) {
+        return data.response.answer;
+    }
+    
+    // Struktur 3: data.answer adalah object yang berisi answer
+    if (data.answer && data.answer.answer) {
+        return data.answer.answer;
+    }
+    
+    // Struktur 4: data.message
+    if (data.message) {
+        return data.message;
+    }
+    
+    // Struktur 5: data.response
+    if (data.response && typeof data.response === 'string') {
+        return data.response;
+    }
+    
+    // Struktur 6: coba cari di nested structures
+    if (typeof data === 'object') {
+        // Cari properti yang berisi string panjang (kemungkinan answer)
+        for (const key in data) {
+            if (typeof data[key] === 'string' && data[key].length > 50) {
+                return data[key];
+            }
+        }
+    }
+    
+    return null;
+}
+
+// Function to format Bible response
+function formatBibleResponse(answer) {
+    // Bersihkan format, hapus markdown citations [17] dll
+    let formatted = answer;
+    
+    // Hapus citation brackets seperti [17], [4][6], dll
+    formatted = formatted.replace(/\[\d+\]/g, '');
+    formatted = formatted.replace(/\[\d+\]\[\d+\]/g, '');
+    
+    // Tambahkan header jika belum ada
+    if (!formatted.includes('ORABIBLE-AI') && !formatted.includes('Answer:')) {
+        formatted = `ORABIBLE-AI (${currentTranslationValue} Translation)\n\n${formatted}`;
+    }
+    
+    return formatted;
 }
 
 // Load history from localStorage
@@ -372,26 +427,19 @@ window.testBibleAPI = async function(testQuestion, translation = 'ESV') {
         });
         
         const data = await response.json();
-        console.log('Test Response:', data);
+        console.log('Test Response Structure:', data);
+        
+        // Debug: Tampilkan semua keys
+        console.log('Response Keys:', Object.keys(data));
+        
+        // Debug: Cek apakah ada answer
+        if (data.answer) {
+            console.log('Answer found:', typeof data.answer, data.answer.substring(0, 100));
+        }
+        
         return data;
     } catch (error) {
         console.error('Test Error:', error);
         return { error: error.message };
     }
 };
-
-// Function untuk memproses response API
-function processBibleResponse(data) {
-    // Hanya ambil bagian 'answer' dari response
-    if (data.answer) {
-        return data.answer;
-    }
-    
-    // Jika tidak ada answer, coba cari di struktur lain
-    if (data.response && data.response.answer) {
-        return data.response.answer;
-    }
-    
-    // Fallback ke response biasa
-    return data.response || data.message || "No answer available.";
-}
