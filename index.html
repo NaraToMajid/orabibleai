@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORABIBLE-AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poopins:wght@800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar - History Only -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">CHAT HISTORY</div>
+            <button class="clear-history-btn" onclick="clearAllHistory()">CLEAR</button>
+        </div>
+        
+        <div class="history-list" id="historyList">
+            <!-- History items will be loaded here -->
+            <div class="no-history" id="noHistory">NO HISTORY YET</div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button class="new-chat-btn" onclick="newChat()">NEW CHAT</button>
+        </div>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="logo">ORABIBLE-AI</div>
+            <div class="translation-selector">
+                <select id="translationSelect" onchange="updateTranslation()">
+                    <option value="ESV" selected>ESV</option>
+                    <option value="NIV">NIV</option>
+                    <option value="KJV">KJV</option>
+                    <option value="NKJV">NKJV</option>
+                    <option value="NASB">NASB</option>
+                    <option value="NLT">NLT</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Chat Container -->
+        <div class="chat-container" id="chatContainer">
+            <!-- Welcome Message -->
+            <div class="welcome-container" id="welcomeMessage">
+                <div class="pixel-title">ORABIBLE-AI</div>
+                <div class="pixel-subtitle">BIBLICAL INTELLIGENCE</div>
+                <div class="translation-display" id="currentTranslation">TRANSLATION: ESV</div>
+                <div class="start-chatting">TYPE TO BEGIN →</div>
+            </div>
+            
+            <!-- Messages will be added here -->
+        </div>
+        
+        <!-- Input Area -->
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea 
+                    class="message-input" 
+                    id="messageInput" 
+                    placeholder="ASK ABOUT THE BIBLE..."
+                    rows="1"
+                    oninput="autoResize(this)"
+                ></textarea>
+                <button class="send-btn" id="sendButton" onclick="sendMessage()">→</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
