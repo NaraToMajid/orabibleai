@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Poopins', monospace;
-    background: #f8f8f8;
+    background: #fffaf0;
     color: #333;
     height: 100vh;
     overflow: hidden;
@@ -19,13 +19,13 @@ body {
     top: 0;
     width: 300px;
     height: 100vh;
-    background: #fff;
-    border-right: 4px solid #333;
+    background: #fffef7;
+    border-right: 4px solid #ffd700;
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 10px rgba(255, 215, 0, 0.2);
 }
 
 .sidebar.open {
@@ -34,8 +34,8 @@ body {
 
 .sidebar-header {
     padding: 20px;
-    border-bottom: 4px solid #333;
-    background: #f0f0f0;
+    border-bottom: 4px solid #ffd700;
+    background: #fffae6;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -46,13 +46,13 @@ body {
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 3px;
-    color: #333;
+    color: #b8860b;
 }
 
 .clear-history-btn {
     background: none;
-    border: 2px solid #333;
-    color: #333;
+    border: 2px solid #ffd700;
+    color: #b8860b;
     padding: 8px 15px;
     cursor: pointer;
     font-family: 'Poopins', monospace;
@@ -64,22 +64,22 @@ body {
 }
 
 .clear-history-btn:hover {
-    background: #333;
-    color: #fff;
+    background: #ffd700;
+    color: #333;
 }
 
 .history-list {
     flex: 1;
     overflow-y: auto;
     padding: 10px;
-    background: #fff;
+    background: #fffef7;
 }
 
 .history-item {
     padding: 15px;
     margin-bottom: 10px;
-    background: #f5f5f5;
-    border: 2px solid #333;
+    background: #fff8e1;
+    border: 2px solid #ffd700;
     cursor: pointer;
     font-weight: 900;
     text-transform: uppercase;
@@ -90,24 +90,24 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: #333;
+    color: #8b6508;
 }
 
 .history-item:hover {
-    background: #333;
-    color: #fff;
+    background: #ffd700;
+    color: #333;
     transform: translateX(5px);
 }
 
 .history-item.active {
-    background: #333;
-    color: #fff;
-    border: 2px solid #333;
+    background: #ffd700;
+    color: #333;
+    border: 2px solid #ffd700;
 }
 
 .history-time {
     font-size: 10px;
-    color: #666;
+    color: #daa520;
     margin-top: 5px;
     text-transform: uppercase;
 }
@@ -115,7 +115,7 @@ body {
 .no-history {
     padding: 30px 20px;
     text-align: center;
-    color: #999;
+    color: #daa520;
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -123,16 +123,16 @@ body {
 
 .sidebar-footer {
     padding: 20px;
-    border-top: 4px solid #333;
-    background: #f0f0f0;
+    border-top: 4px solid #ffd700;
+    background: #fffae6;
 }
 
 .new-chat-btn {
     width: 100%;
     padding: 15px;
-    background: #333;
-    color: #fff;
-    border: 4px solid #333;
+    background: #ffd700;
+    color: #333;
+    border: 4px solid #ffd700;
     font-family: 'Poopins', monospace;
     font-weight: 900;
     font-size: 16px;
@@ -143,8 +143,8 @@ body {
 }
 
 .new-chat-btn:hover {
-    background: #fff;
-    color: #333;
+    background: #333;
+    color: #ffd700;
 }
 
 /* Main Chat Area */
@@ -158,8 +158,8 @@ body {
 /* Header */
 .header {
     padding: 20px;
-    border-bottom: 4px solid #333;
-    background: #f0f0f0;
+    border-bottom: 4px solid #ffd700;
+    background: #fffae6;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -167,8 +167,8 @@ body {
 
 .menu-btn {
     background: none;
-    border: 4px solid #333;
-    color: #333;
+    border: 4px solid #ffd700;
+    color: #b8860b;
     width: 50px;
     height: 50px;
     cursor: pointer;
@@ -182,8 +182,8 @@ body {
 }
 
 .menu-btn:hover {
-    background: #333;
-    color: #fff;
+    background: #ffd700;
+    color: #333;
 }
 
 .logo {
@@ -191,7 +191,7 @@ body {
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 3px;
-    color: #333;
+    color: #b8860b;
 }
 
 .translation-selector {
@@ -201,8 +201,8 @@ body {
 
 .translation-selector select {
     background: #fff;
-    border: 3px solid #333;
-    color: #333;
+    border: 3px solid #ffd700;
+    color: #b8860b;
     padding: 8px 15px;
     font-family: 'Poopins', monospace;
     font-weight: 900;
@@ -215,7 +215,7 @@ body {
 
 .translation-selector select:focus {
     outline: none;
-    background: #f5f5f5;
+    background: #fff8e1;
 }
 
 /* Chat Container */
@@ -223,7 +223,7 @@ body {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
-    background: #f8f8f8;
+    background: #fffaf0;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -247,7 +247,8 @@ body {
     text-transform: uppercase;
     letter-spacing: 4px;
     margin-bottom: 20px;
-    color: #333;
+    color: #b8860b;
+    text-shadow: 2px 2px 0px rgba(255, 215, 0, 0.3);
 }
 
 .pixel-subtitle {
@@ -255,7 +256,7 @@ body {
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: #666;
+    color: #daa520;
     margin-bottom: 20px;
 }
 
@@ -264,12 +265,12 @@ body {
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #333;
+    color: #8b6508;
     margin-bottom: 30px;
     padding: 10px 20px;
-    border: 3px solid #333;
+    border: 3px solid #ffd700;
     display: inline-block;
-    background: #fff;
+    background: #fff8e1;
 }
 
 .start-chatting {
@@ -277,18 +278,18 @@ body {
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: #999;
+    color: #daa520;
     margin-top: 40px;
-    border: 4px solid #333;
+    border: 4px solid #ffd700;
     padding: 20px;
     display: inline-block;
-    background: #fff;
+    background: #fffae6;
     transition: all 0.3s;
 }
 
 .start-chatting:hover {
-    background: #333;
-    color: #fff;
+    background: #ffd700;
+    color: #333;
 }
 
 /* Messages */
@@ -296,8 +297,8 @@ body {
     max-width: 80%;
     animation: messageAppear 0.3s ease-out;
     padding: 20px;
-    border: 4px solid #333;
-    background: #fff;
+    border: 4px solid #ffd700;
+    background: #fffef7;
 }
 
 @keyframes messageAppear {
@@ -307,16 +308,16 @@ body {
 
 .user-message {
     align-self: flex-end;
-    background: #333;
-    color: #fff;
-    border: 4px solid #333;
+    background: #ffd700;
+    color: #333;
+    border: 4px solid #ffd700;
 }
 
 .ai-message {
     align-self: flex-start;
-    background: #fff;
+    background: #fffef7;
     color: #333;
-    border: 4px solid #333;
+    border: 4px solid #ffd700;
 }
 
 .message-content {
@@ -330,23 +331,23 @@ body {
 /* Bible Verse Styling */
 .bible-verse {
     font-style: italic;
-    color: #666;
+    color: #8b6508;
     margin: 10px 0;
     padding-left: 20px;
-    border-left: 3px solid #333;
+    border-left: 3px solid #ffd700;
 }
 
 .verse-reference {
     font-weight: 900;
-    color: #333;
+    color: #b8860b;
     margin-top: 5px;
 }
 
 /* Input Area */
 .input-container {
     padding: 20px;
-    border-top: 4px solid #333;
-    background: #f0f0f0;
+    border-top: 4px solid #ffd700;
+    background: #fffae6;
 }
 
 .input-wrapper {
@@ -360,7 +361,7 @@ body {
     flex: 1;
     padding: 20px;
     background: #fff;
-    border: 4px solid #333;
+    border: 4px solid #ffd700;
     color: #333;
     font-family: 'Poopins', monospace;
     font-size: 18px;
@@ -374,17 +375,17 @@ body {
 
 .message-input:focus {
     outline: none;
-    background: #fafafa;
+    background: #fff8e1;
 }
 
 .message-input::placeholder {
-    color: #999;
+    color: #daa520;
 }
 
 .send-btn {
-    background: #333;
-    color: #fff;
-    border: 4px solid #333;
+    background: #ffd700;
+    color: #333;
+    border: 4px solid #ffd700;
     width: 60px;
     height: 60px;
     cursor: pointer;
@@ -399,8 +400,8 @@ body {
 }
 
 .send-btn:hover {
-    background: #fff;
-    color: #333;
+    background: #333;
+    color: #ffd700;
 }
 
 .send-btn:disabled {
@@ -411,8 +412,8 @@ body {
 /* Typing Indicator */
 .typing-indicator {
     padding: 20px;
-    border: 4px solid #333;
-    background: #fff;
+    border: 4px solid #ffd700;
+    background: #fffef7;
     align-self: flex-start;
     display: flex;
     gap: 10px;
@@ -421,7 +422,7 @@ body {
 .typing-dot {
     width: 12px;
     height: 12px;
-    background: #333;
+    background: #ffd700;
     border-radius: 0;
     animation: typingBounce 1s infinite;
 }
@@ -442,13 +443,13 @@ body {
 
 .chat-container::-webkit-scrollbar-track,
 .history-list::-webkit-scrollbar-track {
-    background: #f0f0f0;
+    background: #fffae6;
 }
 
 .chat-container::-webkit-scrollbar-thumb,
 .history-list::-webkit-scrollbar-thumb {
-    background: #333;
-    border: 2px solid #f0f0f0;
+    background: #ffd700;
+    border: 2px solid #fffae6;
 }
 
 /* Cross Pattern Background */
@@ -462,10 +463,10 @@ body {
     opacity: 0.05;
     z-index: -1;
     background-image: 
-        linear-gradient(45deg, #333 25%, transparent 25%),
-        linear-gradient(-45deg, #333 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #333 75%),
-        linear-gradient(-45deg, transparent 75%, #333 75%);
+        linear-gradient(45deg, #ffd700 25%, transparent 25%),
+        linear-gradient(-45deg, #ffd700 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ffd700 75%),
+        linear-gradient(-45deg, transparent 75%, #ffd700 75%);
     background-size: 40px 40px;
     background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
 }
